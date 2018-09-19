@@ -15,61 +15,19 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  // mains the value of the 9 squares in one location so we can check for a winner
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      // set the first move to be "X"
-      xIsNext:true,
-    };
-  }
-
-  // the Square calls handleClick when clicked
-  // each time a player moves, xIsNext (boolean) will flip to determine who goes next
-  handleClick(i) {
-    // creates a copy of the squares array to modify instead of modifying the existing array
-    const squares = this.state.squares.slice();
-
-    // return early by ignoring a click if the game is already won or if a square is already filled 
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-
-    // flip xIsNext boolean
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
-  }
-
-
   renderSquare(i) {
     return (
       <Square
       // each Square receives a value prop that will either be "X", "O", or "null"
-        value={this.state.squares[i]} 
-        // Board passes on handleClick to the square so Square can indirectly update Board's state
-        onClick={()=> this.handleClick(i)}
+        value={this.props.squares[i]} 
+        onClick={()=> this.props.onClick(i)}
       />
     );
   }
 
   render() {
-    const winner = calculateWinner(this.state.squares);
-    let status;
-    if (winner) {
-      // if the game is won, display the winner
-      status = 'Winner: ' + winner;
-    } else {
-      // if the game is not won, display which player goes next
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -91,15 +49,94 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+  // set up initial state for the Game component within its constructor
+  // maintains the value of the 9 squares in one location so we can check for a winner
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: [{
+        squares: Array(9).fill(null),
+      }],
+      // step number starts as 0
+      stepNumber: 0,
+      // set the first move to be "X"
+      xIsNext: true,
+    };
+  }
+
+  handleClick(i) {
+    // ensures if we go back in time and make a new move from that point, 
+    // we throw away future history that now would be incorrect
+    const history = this.state.history.slice(0, this.state.stepNumber +1);
+    const current = history[history.length - 1];
+
+    // creates a copy of the squares array to modify instead of modifying the existing array
+    const squares = current.squares.slice();
+
+    // return early by ignoring a click if the game is already won or if a square is already filled 
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    }
+
+    // each time a player moves, xIsNext (boolean) will flip to determine who goes next
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      history: history.concat([{
+        squares: squares,
+      }]),
+      stepNumber: history.length,
+      xIsNext: !this.state.xIsNext,
+    });
+  }
+
+  // method to update stepNumber
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      // update xIsNext to true if number we are changing stepNumber to is even
+      xIsNext: (step % 2) === 0,
+    });
+  }
+
   render() {
+    // use most recent history entry to determine and display the game's status
+    const history = this.state.history;
+    const current = history[this.state.stepNumber];
+    const winner = calculateWinner(current.squares);
+
+    // map over the history
+    const moves = history.map((step, move) => {
+      const desc = move ?
+        'Go to move #' + move :
+        'Go to game start';
+      return (
+        // for each move in the tic-tac-toe's game's history, we create a list item contains a button
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        </li>
+      );
+    });
+
+    let status;
+    if (winner) {
+      // if the game is won, display the winner
+      status = 'Winner: ' + winner;
+    } else {
+      // if the game is not won, display which player goes next
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
+
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board
+            squares={current.squares}
+            onClick={(i) => this.handleClick(i)}
+          />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
+          <div>{status}</div>
+          <ol>{moves}</ol>
         </div>
       </div>
     );
