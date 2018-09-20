@@ -1,4 +1,8 @@
-import React, { Component } from 'react';
+/**InputButton Class for Calculator
+Created by Emily Pitts and Hanting Guo for cs98 hack-a-thing
+Due September 20th 2018**/
+
+import React, { Component } from 'react'; 
 import {
     View,
     TouchableHighlight,
@@ -6,6 +10,7 @@ import {
 } from 'react-native';
 import Style from './Style';
 
+//Class rendering the input button and actual text within each button; takes font size from App.js
 export default class InputButton extends Component {
     render() {
      return (

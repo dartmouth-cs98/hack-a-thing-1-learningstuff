@@ -11,6 +11,7 @@ import Style from './Style';
 import InputButton from './InputButton';
 AppRegistry.registerComponent('ReactCalculator', () => ReactCalculator);
 
+//Calculator buttons
 const inputButtons = [
     [1, 2, 3, '/'],
     [4, 5, 6, '*'],
@@ -18,6 +19,7 @@ const inputButtons = [
     [0, 'CE', '=', '+']
 ];
 
+//List of fibonacci numbers
 const fibnums = [0  ,
 1 ,
 2 ,
@@ -52,6 +54,7 @@ const fibnums = [0  ,
 2178309 ,
 3524578]
 
+//default class setting up state variables
 export default class ReactCalculator extends Component {
 
    constructor(props) {
@@ -65,6 +68,7 @@ export default class ReactCalculator extends Component {
       }
     }
 
+//Rendering the color frames and background for buttons
   render() {
     return (
        <View style={Style.rootContainer}>
@@ -77,21 +81,24 @@ export default class ReactCalculator extends Component {
       </View>
     );
   }
-  
+
+//Creates physical buttons, digits, and font size
   _renderInputButtons() {
         
         let views = [];
 
+        //for each row
         for (var r = 0; r < inputButtons.length; r ++) {
             let row = inputButtons[r];
 
+            //each button on the row
             let inputRow = [];
             for (var i = 0; i < row.length; i ++) {
                 let input = row[i];
 
                 inputRow.push(
                   <InputButton 
-                    font={this.state.freq[r][i]}
+                    font={this.state.freq[r][i]} //this allows us to draw the button corresponding to the frequency of it being clicked
                     value={input} 
                     highlight={this.state.selectedSymbol === input}
                     onPress={this._onInputButtonPressed.bind(this, input)}
@@ -103,6 +110,9 @@ export default class ReactCalculator extends Component {
         }
         return views;
   }
+
+//Handling when buttons are pressed
+//Increment frequency matrix when button is pressed
 
   _onInputButtonPressed(input) {
       switch (typeof input) {
@@ -143,6 +153,7 @@ export default class ReactCalculator extends Component {
       }
   }
 
+//Handling number button clicks
   _handleNumberInput(num) {
       let inputValue = (this.state.inputValue * 10) + num;
 
@@ -151,19 +162,24 @@ export default class ReactCalculator extends Component {
       })
   }
 
+//Handling operation button clicks
   _handleStringInput(str) {
       switch (str) {
+        //if it is a numerical operation
           case '/':
           case '*':
           case '+':
           case '-':
+          //store it in the state
             this.setState({
                 selectedSymbol: str,
                 previousInputValue: this.state.inputValue,
                 inputValue: 0
             });
             break;
+            //if we want to generate answer
           case '=':
+          //pull from state variables and calculate
                 let symbol = this.state.selectedSymbol,
                     inputValue = this.state.inputValue,
                     previousInputValue = this.state.previousInputValue;
@@ -171,6 +187,7 @@ export default class ReactCalculator extends Component {
                 if (!symbol) {
                     return;
                 }
+                //If what we calculate is a fibonacci number
                 if (fibnums.includes(eval(previousInputValue + symbol + inputValue))) {
                   let temp = eval(previousInputValue + symbol + inputValue)
                   place = fibnums.indexOf(temp)+1
@@ -184,8 +201,10 @@ export default class ReactCalculator extends Component {
                   if (place%10==3) {
                     stt = "rd";
                   }
+                  //send an alert saying that we have calculated a fibonacci number
                   alert(temp.toString() + " is the " + place.toString()+ stt+" Fibonacci number!")
                 }
+                //reset state
                 this.setState({
                     previousInputValue: 0,
                     inputValue: eval(previousInputValue + symbol + inputValue),
