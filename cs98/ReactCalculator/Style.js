@@ -12,7 +12,7 @@ var Style = StyleSheet.create({
     },
 
     displayText: {
-        color: 'white',
+        color: 'red',
         fontSize: 38,
         fontWeight: 'bold',
         textAlign: 'right',
@@ -36,9 +36,9 @@ var Style = StyleSheet.create({
     },
     
     inputButtonText: {
-        fontSize: 22,
+        //fontSize: 22,
         fontWeight: 'bold',
-        color: 'white'
+        color: '#7CFC00'
     },
     inputRow: {
         flex: 1,

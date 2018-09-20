@@ -20,7 +20,6 @@ const inputButtons = [
 
 const fibnums = [0  ,
 1 ,
-1 ,
 2 ,
 3 ,
 5 ,
@@ -61,7 +60,8 @@ export default class ReactCalculator extends Component {
       this.state = {
         inputValue: 0,
         previousInputValue: 0,
-        selectedSymbol: null
+        selectedSymbol: null,
+        freq: [[17,17,17,24],[17,17,17,24],[17,17,17,24],[17,17,17,24]]
       }
     }
 
@@ -91,6 +91,7 @@ export default class ReactCalculator extends Component {
 
                 inputRow.push(
                   <InputButton 
+                    font={this.state.freq[r][i]}
                     value={input} 
                     highlight={this.state.selectedSymbol === input}
                     onPress={this._onInputButtonPressed.bind(this, input)}
@@ -98,14 +99,44 @@ export default class ReactCalculator extends Component {
                 );
             }
             views.push(<View style={Style.inputRow} key={"row-" + r}>{inputRow}</View>)
+        
         }
-
         return views;
   }
 
   _onInputButtonPressed(input) {
       switch (typeof input) {
         case 'number':
+            if (input==1) {
+              this.state.freq[0][0]+=3
+            }
+            if (input==2) {
+              this.state.freq[0][1]+=3
+            }
+            if (input==3) {
+              this.state.freq[0][2]+=3
+            }
+            if (input==4) {
+              this.state.freq[1][0]+=3
+            }
+            if (input==5) {
+              this.state.freq[1][1]+=3
+            }
+            if (input==6) {
+              this.state.freq[1][2]+=3
+            }
+            if (input==7) {
+              this.state.freq[2][0]+=3
+            }
+            if (input==8) {
+              this.state.freq[2][1]+=3
+            }
+            if (input==9) {
+              this.state.freq[2][2]+=3
+            }
+            if (input==0) {
+              this.state.freq[3][0]+=3
+            }
             return this._handleNumberInput(input)
         case 'string':
             return this._handleStringInput(input)
@@ -141,8 +172,19 @@ export default class ReactCalculator extends Component {
                     return;
                 }
                 if (fibnums.includes(eval(previousInputValue + symbol + inputValue))) {
-                  let temp = eval(previousInputValue + symbol + inputValue).toString()
-                  alert(temp + " is a Fibonacci number!")
+                  let temp = eval(previousInputValue + symbol + inputValue)
+                  place = fibnums.indexOf(temp)+1
+                  let stt = "th"
+                  if (place%10==1) {
+                    stt = "st";
+                  }
+                  if(place%10==2) {
+                    stt = "nd";
+                  }
+                  if (place%10==3) {
+                    stt = "rd";
+                  }
+                  alert(temp.toString() + " is the " + place.toString()+ stt+" Fibonacci number!")
                 }
                 this.setState({
                     previousInputValue: 0,
