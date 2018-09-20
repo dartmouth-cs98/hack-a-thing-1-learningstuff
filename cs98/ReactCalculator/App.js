@@ -2,6 +2,7 @@
  Emily Pitts & Hanting Guo
  CS 98 Hack-a-Thing
  Due 9/20/18
+ * Expanded upon tutorial found here https://kylewbanks.com/blog/react-native-tutorial-part-2-designing-a-calculator
  */
 
 import React, {Component} from 'react';
@@ -14,8 +15,43 @@ const inputButtons = [
     [1, 2, 3, '/'],
     [4, 5, 6, '*'],
     [7, 8, 9, '-'],
-    [0, '.', '=', '+']
+    [0, 'CE', '=', '+']
 ];
+
+const fibnums = [0  ,
+1 ,
+1 ,
+2 ,
+3 ,
+5 ,
+8 ,
+13  ,
+21  ,
+34  ,
+55  ,
+89  ,
+144 ,
+233 ,
+377 ,
+610 ,
+987 ,
+1597  ,
+2584  ,
+4181  ,
+6765  ,
+10946 ,
+17711 ,
+28657 ,
+46368 ,
+75025 ,
+121393  ,
+196418  ,
+317811  ,
+514229  ,
+832040  ,
+1346269 ,
+2178309 ,
+3524578]
 
 export default class ReactCalculator extends Component {
 
@@ -104,13 +140,24 @@ export default class ReactCalculator extends Component {
                 if (!symbol) {
                     return;
                 }
-
+                if (fibnums.includes(eval(previousInputValue + symbol + inputValue))) {
+                  let temp = eval(previousInputValue + symbol + inputValue).toString()
+                  alert(temp + " is a Fibonacci number!")
+                }
                 this.setState({
                     previousInputValue: 0,
                     inputValue: eval(previousInputValue + symbol + inputValue),
                     selectedSymbol: null
                 });
                 break;
+           case 'CE':
+          // Clear Everything
+          this.setState({
+          connectValue: null,
+            inputValue: 0,
+            displayedValue: null
+          });
+          break;
         }
     }
 }
